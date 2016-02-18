@@ -1,0 +1,40 @@
+$ConfigData = @{   
+    AllNodes = @(        
+        @{     
+            NodeName = 'ServerA'
+            IPAddress = '10.10.10.10'
+            DefaultGateway = '10.10.10.1'
+            InterfaceAlias = 'Ethernet 2'
+            SubnetMask = 24
+            AddressFamily = 'Ipv4'
+            DnsServerAddress = @(
+                '10.10.10.2'
+                '10.10.10.3'
+            )
+        } 
+    )
+}  
+ 
+Configuration NetworkTest
+{              
+    Import-DscResource -Module xNetworking
+ 
+    node $AllNodes.NodeName
+    {
+        xIPAddress NewIPAddress 
+        { 
+                IPAddress      = $Node.IPAddress
+                InterfaceAlias = $Node.InterfaceAlias 
+                DefaultGateway = $Node.DefaultGateway 
+                SubnetMask     = $Node.SubnetMask 
+                AddressFamily  = $Node.AddressFamily
+        }
+
+        xDnsServerAddress DnsServerAddress 
+        { 
+            Address        = $Node.DnsServerAddress 
+            InterfaceAlias = $Node.InterfaceAlias 
+            AddressFamily  = $Node.AddressFamily 
+        } 
+    }
+}
